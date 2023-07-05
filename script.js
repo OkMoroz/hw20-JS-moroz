@@ -5,17 +5,56 @@ class SuperMath {
   check(obj) {
     const { X, Y, znak } = obj;
 
-    if (X === "" || Y === "" || znak === "") {
-      alert(
-        `Одне або декілька полів не заповнено. Неможливо зробити обчислення. Спробуйте ще раз.`
-      );
+    const confirmed = confirm(
+      `Хочете зробити математичну дію ${znak} ${X} та ${Y}?`
+    );
+    if (confirmed) {
+      const result = this.calculate({ X, Y, znak });
+      alert(`Результат: ${result}`);
+    } else {
+      this.input();
+    }
+  }
+
+  input() {
+    let X, Y, znak;
+
+    X = prompt("Введіть число X:");
+    if (X === null) {
+      alert("Ви скасували дію");
+      return;
+    }
+    if (X.trim() === "") {
+      alert("Поле X не заповнено. Спробуйте ще раз.");
+      return;
+    }
+    X = +X;
+    if (isNaN(X)) {
+      alert(`Не число. Спробуйте ще раз.`);
       return;
     }
 
-    if (isNaN(parseFloat(X)) || isNaN(parseFloat(Y))) {
-      alert(
-        `X або Y - не число. Неможливо зробити обчислення. Спробуйте ще раз.`
-      );
+    Y = prompt("Введіть число Y:");
+    if (Y === null) {
+      alert("Ви скасували дію");
+      return;
+    }
+    if (Y.trim() === "") {
+      alert("Поле Y не заповнено. Спробуйте ще раз.");
+      return;
+    }
+    Y = +Y;
+    if (isNaN(Y)) {
+      alert(`Не число. Спробуйте ще раз.`);
+      return;
+    }
+    znak = prompt("Введіть знак (+, -, *, /, %):");
+    if (znak === null) {
+      alert("Ви скасували дію");
+      return;
+    }
+    if (znak.trim() === "") {
+      alert("Поле знак не заповнено. Спробуйте ще раз.");
       return;
     }
 
@@ -27,19 +66,11 @@ class SuperMath {
     }
 
     if (znak === "/" && parseFloat(Y) === 0) {
-      alert(`На нуль ділити не можна!`);
+      alert("На нуль ділити не можна!");
       return;
     }
 
-    const confirmed = confirm(
-      `Хочете зробити математичну дію ${znak} ${X} та ${Y}?`
-    );
-    if (confirmed) {
-      const result = this.calculate({ X, Y, znak });
-      alert(`Результат: ${result}`);
-    } else {
-      this.input();
-    }
+    this.check({ X, Y, znak });
   }
 
   validateOperation(znak) {
@@ -60,32 +91,6 @@ class SuperMath {
       case "%":
         return X % Y;
     }
-  }
-
-  input() {
-    let X, Y, znak;
-
-    X = prompt(`Введіть число X:`);
-    if (X === null) {
-      alert(`Ви скасували дію`);
-      return;
-    }
-    X = +X;
-
-    Y = prompt(`Введіть число Y:`);
-    if (Y === null) {
-      alert(`Ви скасували дію`);
-      return;
-    }
-    Y = +Y;
-
-    znak = prompt(`Введіть знак (+, -, *, /, %):`);
-    if (znak === null) {
-      alert(`Ви скасували дію`);
-      return;
-    }
-
-    this.check({ X, Y, znak });
   }
 }
 
