@@ -3,13 +3,13 @@ class SuperMath {
   constructor() {}
 
   check(obj) {
-    const { X, Y, znak } = obj;
+    const { x, y, znak } = obj;
 
     const confirmed = confirm(
-      `Хочете зробити математичну дію ${znak} ${X} та ${Y}?`
+      `Хочете зробити математичну дію ${znak} з чисел ${x} та ${y}?`
     );
     if (confirmed) {
-      const result = this.calculate({ X, Y, znak });
+      const result = this.calculate({ x, y, znak });
       alert(`Результат: ${result}`);
     } else {
       this.input();
@@ -17,87 +17,108 @@ class SuperMath {
   }
 
   input() {
-    let X, Y, znak;
+    let x, y, znak;
 
-    X = prompt("Введіть число X:");
-    if (X === null) {
-      alert("Ви скасували дію");
+    x = prompt(`Введіть число X: `);
+    const xValidation = validateNumber(x);
+    if (!xValidation.valid) {
+      alert(xValidation.message);
       return;
     }
-    if (X.trim() === "") {
-      alert("Поле X не заповнено. Спробуйте ще раз.");
-      return;
-    }
-    X = +X;
-    if (isNaN(X)) {
-      alert(`Не число. Спробуйте ще раз.`);
-      return;
-    }
+    x = xValidation.value;
 
-    Y = prompt("Введіть число Y:");
-    if (Y === null) {
-      alert("Ви скасували дію");
+    y = prompt(`Введіть число Y:`);
+    const yValidation = validateNumber(y);
+    if (!yValidation.valid) {
+      alert(yValidation.message);
       return;
     }
-    if (Y.trim() === "") {
-      alert("Поле Y не заповнено. Спробуйте ще раз.");
-      return;
-    }
-    Y = +Y;
-    if (isNaN(Y)) {
-      alert(`Не число. Спробуйте ще раз.`);
-      return;
-    }
-    znak = prompt("Введіть знак (+, -, *, /, %):");
-    if (znak === null) {
-      alert("Ви скасували дію");
-      return;
-    }
-    if (znak.trim() === "") {
-      alert("Поле знак не заповнено. Спробуйте ще раз.");
-      return;
-    }
+    y = yValidation.value;
 
-    if (!this.validateOperation(znak)) {
-      alert(
-        `Ви ввели некоректний знак ${znak}. Неможливо зробити обчислення. Спробуйте ще раз.`
-      );
+    znak = prompt(`Введіть знак (+, -, *, /, %): `);
+    const znakValidation = validateZnak(znak, y);
+    if (!znakValidation.valid) {
+      alert(znakValidation.message);
       return;
     }
+    znak = znakValidation.value;
 
-    if (znak === "/" && parseFloat(Y) === 0) {
-      alert("На нуль ділити не можна!");
-      return;
-    }
-
-    this.check({ X, Y, znak });
+    this.check({ x, y, znak });
   }
 
-  validateOperation(znak) {
-    const validOperations = ["+", "-", "*", "/", "%"];
-    return validOperations.includes(znak);
-  }
-
-  calculate({ X, Y, znak }) {
+  calculate({ x, y, znak }) {
     switch (znak) {
       case "+":
-        return X + Y;
+        return x + y;
       case "-":
-        return X - Y;
+        return x - y;
       case "/":
-        return X / Y;
+        return x / y;
       case "*":
-        return X * Y;
+        return x * y;
       case "%":
-        return X % Y;
+        return x % y;
     }
   }
 }
 
+function validateNumber(input) {
+  if (input === null) {
+    return {
+      message: `Ви скасували дію`,
+    };
+  }
+  if (input.trim() === "") {
+    return {
+      message: `Поле не заповнено. Спробуйте ще раз.`,
+    };
+  }
+  if (isNaN(+input)) {
+    return {
+      message: `Введене значення - не число. Спробуйте ще раз.`,
+    };
+  }
+  return {
+    valid: true,
+    value: +input,
+  };
+}
+
+function validateZnak(znak, y) {
+  if (znak === null) {
+    return {
+      message: `Ви скасували дію`,
+    };
+  }
+  if (znak.trim() === "") {
+    return {
+      message: `Поле знак не заповнено. Спробуйте ще раз.`,
+    };
+  }
+
+  const validOperations = ["+", "-", "*", "/", "%"];
+  if (!validOperations.includes(znak)) {
+    return {
+      message: `Ви ввели некоректний знак ${znak}. Неможливо зробити обчислення. Спробуйте ще раз.`,
+    };
+  }
+
+  if (znak === "/" && y === 0) {
+    return {
+      message: `На нуль ділити не можна!`,
+    };
+  }
+
+  return {
+    valid: true,
+    value: znak,
+  };
+}
+
 const p = new SuperMath();
 const obj = {
-  X: 12,
-  Y: 3,
+  x: 12,
+  y: 3,
   znak: "/",
 };
 p.check(obj);
