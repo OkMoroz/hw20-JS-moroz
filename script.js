@@ -5,7 +5,29 @@ class SuperMath {
   check(obj) {
     const { X, Y, znak } = obj;
 
-    if (!this.validateOperation(X, Y, znak)) {
+    if (X === "" || Y === "" || znak === "") {
+      alert(
+        `Одне або декілька полів не заповнено. Неможливо зробити обчислення. Спробуйте ще раз.`
+      );
+      return;
+    }
+
+    if (isNaN(parseFloat(X)) || isNaN(parseFloat(Y))) {
+      alert(
+        `X або Y - не число. Неможливо зробити обчислення. Спробуйте ще раз.`
+      );
+      return;
+    }
+
+    if (!this.validateOperation(znak)) {
+      alert(
+        `Ви ввели некоректний знак ${znak}. Неможливо зробити обчислення. Спробуйте ще раз.`
+      );
+      return;
+    }
+
+    if (znak === "/" && parseFloat(Y) === 0) {
+      alert(`На нуль ділити не можна!`);
       return;
     }
 
@@ -13,47 +35,19 @@ class SuperMath {
       `Хочете зробити математичну дію ${znak} ${X} та ${Y}?`
     );
     if (confirmed) {
-      const result = this.calculate(parseFloat(X), parseFloat(Y), znak);
-      alert(`Результат: ${result.toFixed(2)}`);
+      const result = this.calculate({ X, Y, znak });
+      alert(`Результат: ${result}`);
     } else {
       this.input();
     }
   }
 
-  validateOperation(X, Y, znak) {
-    if (X === "" || Y === "" || znak === "") {
-      alert(
-        `Одне або декілька полів не заповнено. Неможливо зробити обчислення. Спробуйте ще раз.`
-      );
-      return false;
-    }
-    if (isNaN(parseFloat(X))) {
-      alert(`X - не число. Неможливо зробити обчислення. Спробуйте ще раз.`);
-      return false;
-    }
-
-    if (isNaN(parseFloat(Y))) {
-      alert(`Y - не число. Неможливо зробити обчислення. Спробуйте ще раз.`);
-      return false;
-    }
-
+  validateOperation(znak) {
     const validOperations = ["+", "-", "*", "/", "%"];
-    if (!validOperations.includes(znak)) {
-      alert(
-        `Ви ввели некоректний знак ${znak}. Неможливо зробити обчислення. Спробуйте ще раз.`
-      );
-      return false;
-    }
-
-    if (znak === "/" && parseFloat(Y) === 0) {
-      alert(`На нуль ділити не можна!`);
-      return false;
-    }
-
-    return true;
+    return validOperations.includes(znak);
   }
 
-  calculate(X, Y, znak) {
+  calculate({ X, Y, znak }) {
     switch (znak) {
       case "+":
         return X + Y;
@@ -69,29 +63,29 @@ class SuperMath {
   }
 
   input() {
-    const X = prompt(`Введіть число X:`);
+    let X, Y, znak;
+
+    X = prompt(`Введіть число X:`);
     if (X === null) {
-      alert("Дію скасовано.");
+      alert(`Ви скасували дію`);
       return;
     }
+    X = +X;
 
-    const Y = prompt(`Введіть число Y:`);
+    Y = prompt(`Введіть число Y:`);
     if (Y === null) {
-      alert("Дію скасовано.");
+      alert(`Ви скасували дію`);
       return;
     }
+    Y = +Y;
 
-    const znak = prompt(`Введіть знак (+, -, *, /, %):`);
+    znak = prompt(`Введіть знак (+, -, *, /, %):`);
     if (znak === null) {
-      alert("Дію скасовано.");
+      alert(`Ви скасували дію`);
       return;
     }
 
-    this.check({
-      X,
-      Y,
-      znak,
-    });
+    this.check({ X, Y, znak });
   }
 }
 
